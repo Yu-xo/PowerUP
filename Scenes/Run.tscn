@@ -1,0 +1,68 @@
+[gd_scene load_steps=4 format=3 uid="uid://ch1qao0xjo4fi"]
+
+[ext_resource type="PackedScene" uid="uid://cc1f1jc147fxu" path="res://Scenes/Character/Player.tscn" id="1_ropog"]
+[ext_resource type="PackedScene" uid="uid://bemvnec2nbgav" path="res://Scenes/Enemy/mob1.tscn" id="2_wyxvx"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l8att"]
+size = Vector2(84, 1422)
+
+[node name="Node2D" type="Node2D"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 1154.0
+offset_bottom = 644.0
+color = Color(0, 0, 0, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+offset_right = 46.0
+offset_bottom = 644.0
+color = Color(0, 0, 0, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="."]
+offset_left = 1111.0
+offset_top = -2.0
+offset_right = 1157.0
+offset_bottom = 642.0
+color = Color(0, 0, 0, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="."]
+offset_left = 1140.0372
+offset_top = 2.1682476e-05
+offset_right = 1186.0372
+offset_bottom = 1140.0372
+rotation = 1.5707964
+color = Color(0, 0, 0, 1)
+
+[node name="ColorRect5" type="ColorRect" parent="."]
+offset_left = 1152.0
+offset_top = 602.0
+offset_right = 1198.0
+offset_bottom = 1742.0372
+rotation = 1.5707964
+color = Color(0, 0, 0, 1)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(32, 315)
+shape = SubResource("RectangleShape2D_l8att")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(1146, 312)
+shape = SubResource("RectangleShape2D_l8att")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(605, 18)
+rotation = 1.5707964
+shape = SubResource("RectangleShape2D_l8att")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(557, 628)
+rotation = 1.5707964
+shape = SubResource("RectangleShape2D_l8att")
+
+[node name="Player" parent="." instance=ExtResource("1_ropog")]
+position = Vector2(224, 314)
+
+[node name="Mob" parent="." instance=ExtResource("2_wyxvx")]
+position = Vector2(607, 290)
