@@ -158,30 +158,7 @@ func _physics_process(delta: float) -> void:
 	# -----------------------------------------------------
 	# 8. SLIDE
 	# -----------------------------------------------------
-	# ------------------------------------------
-# SLOW DOWN WHEN APPROACHING STATICBODY2D
-# ------------------------------------------
-	if !is_dashing:
-		var space_state = get_world_2d().direct_space_state
-		var query = PhysicsRayQueryParameters2D.create(global_position, global_position + velocity.normalized() * 30.0)
-		query.collide_with_areas = false
-		query.collide_with_bodies = true
-
-		var hit = space_state.intersect_ray(query)
-
-		if hit and hit.collider is StaticBody2D:
-			# Distance to wall
-			var dist = global_position.distance_to(hit.position)
-
-			# Slowdown factor (closer = slower)
-			var slowdown = clamp(dist / 40.0, 0.0, 1.0)
-
-			velocity *= slowdown
-
-			# Stop if extremely near
-			if dist < 8.0:
-				velocity = Vector2.ZERO
-
+	
 	move_and_slide()
 
 	# -----------------------------------------------------
