@@ -12,12 +12,20 @@ config_version=5
 
 config/name="MinJam:PowerUP"
 run/main_scene="uid://ch1qao0xjo4fi"
-config/features=PackedStringArray("4.6", "Forward Plus")
+config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 StatsManager="*res://Global/StatsManager.gd"
+
+[display]
+
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
 
 [global_group]
 
