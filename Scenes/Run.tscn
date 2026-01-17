@@ -1,10 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://ch1qao0xjo4fi"]
+[gd_scene load_steps=6 format=3 uid="uid://ch1qao0xjo4fi"]
 
 [ext_resource type="PackedScene" uid="uid://cc1f1jc147fxu" path="res://Scenes/Character/Player.tscn" id="1_ropog"]
-[ext_resource type="PackedScene" uid="uid://bemvnec2nbgav" path="res://Scenes/Enemy/mob1.tscn" id="2_wyxvx"]
+[ext_resource type="PackedScene" uid="uid://m1hpkdbfbu72" path="res://Scenes/Waves/Spawner.tscn" id="2_wyxvx"]
+[ext_resource type="PackedScene" uid="uid://dywdlsqwyumd5" path="res://Scenes/UI/Upgrades/Upgrades.tscn" id="3_38uoo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l8att"]
 size = Vector2(84, 1422)
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_wyxvx"]
+vertices = PackedVector2Array(1306.3828, 713.0469, -45.109375, 719.9375, -53.882813, -66.25, 1257.5938, -99.75)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-64, -76, -55, 730, 1317, 723, 1267, -110)])
 
 [node name="Node2D" type="Node2D"]
 
@@ -61,8 +67,21 @@ position = Vector2(557, 628)
 rotation = 1.5707964
 shape = SubResource("RectangleShape2D_l8att")
 
-[node name="Player" parent="." instance=ExtResource("1_ropog")]
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_wyxvx")
+
+[node name="Player" parent="NavigationRegion2D" instance=ExtResource("1_ropog")]
 position = Vector2(224, 314)
 
-[node name="Mob" parent="." instance=ExtResource("2_wyxvx")]
-position = Vector2(607, 290)
+[node name="WaveSpawner" parent="NavigationRegion2D" instance=ExtResource("2_wyxvx")]
+
+[node name="MidPoint" type="Node2D" parent="NavigationRegion2D" groups=["mid"]]
+position = Vector2(573, 330)
+
+[node name="UPgradeUI" parent="." instance=ExtResource("3_38uoo")]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+limit_left = 0
+limit_top = 0
+limit_right = 1152
+limit_bottom = 648

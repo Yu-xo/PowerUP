@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://bglylvs7xdjpm"]
+
+[ext_resource type="Script" uid="uid://b1jo8wnfn7hgh" path="res://Scenes/Enemy/tank_enemy.gd" id="1_nybmd"]
+[ext_resource type="Texture2D" uid="uid://b7uaw4tdwcryo" path="res://Assets/Hana Caraka - Base Character [sample]/Player/rotate.png" id="2_sp5qk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w0u4p"]
+size = Vector2(36, 34)
+
+[node name="TankEnemy" type="CharacterBody2D"]
+script = ExtResource("1_nybmd")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_w0u4p")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_sp5qk")

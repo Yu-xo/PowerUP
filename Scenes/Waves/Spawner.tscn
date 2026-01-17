@@ -1,0 +1,14 @@
+[gd_scene load_steps=6 format=3 uid="uid://m1hpkdbfbu72"]
+
+[ext_resource type="Script" uid="uid://bj4bjrr6nb66y" path="res://Scenes/Waves/spawner.gd" id="1_83hop"]
+[ext_resource type="PackedScene" uid="uid://kcrvt8nwopd5" path="res://Scenes/Enemy/FollowEnemy.tscn" id="2_83hop"]
+[ext_resource type="PackedScene" uid="uid://bemvnec2nbgav" path="res://Scenes/Enemy/mob1.tscn" id="2_lqsxj"]
+[ext_resource type="PackedScene" uid="uid://bglylvs7xdjpm" path="res://Scenes/Enemy/tank_enemy.tscn" id="4_27qly"]
+[ext_resource type="PackedScene" uid="uid://bfnrcbn0liwfr" path="res://Scenes/Enemy/explode_enemy.tscn" id="5_ubc02"]
+
+[node name="WaveSpawner" type="Node2D"]
+script = ExtResource("1_83hop")
+enemy_type_1 = ExtResource("2_lqsxj")
+enemy_type_2 = ExtResource("2_83hop")
+enemy_type_3 = ExtResource("4_27qly")
+enemy_type_4 = ExtResource("5_ubc02")

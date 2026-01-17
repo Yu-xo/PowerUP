@@ -1,5 +1,8 @@
 extends CharacterBody2D
 
+# ---------------------------------------------------------
+# BASE VALUES (exported)
+# ---------------------------------------------------------
 @export var base_speed: float = 300.0
 @export var max_charge: float = 10.0
 @export var charge_rate: float = 3.0
@@ -15,6 +18,9 @@ extends CharacterBody2D
 @onready var tween := create_tween()
 @onready var body_tween := create_tween()
 
+# ---------------------------------------------------------
+# RUNTIME VALUES
+# ---------------------------------------------------------
 var health: float = max_health
 var charge: float = 0.0
 var is_charging: bool = false
@@ -25,10 +31,52 @@ var is_dashing: bool = false
 var overcharge_timer: float = 0.0
 var is_overcharging: bool = false
 
-func _physics_process(delta: float) -> void:
-	rotate_towards_mouse()
+# NEW — Aim Mode (Right-Click Slow Motion)
+var is_aiming: bool = false
 
-	if is_charging:
+# ---------------------------------------------------------
+# UPGRADE VARIABLES
+# ---------------------------------------------------------
+## Attack
+var dash_damage_bonus: int = 0
+var bounce_damage_multiplier: float = 1.0
+var charge_damage_multiplier: float = 1.0
+var first_hit_bonus: int = 0
+var first_hit_active: bool = false
+
+## Defense
+var shield: float = 0.0
+var shield_regen_rate: float = 0.0
+var dash_invincible_time: float = 0.0
+var shield_refill_on_hit: bool = false
+var dash_invincible_timer: float = 0.0
+
+## Health
+var regen_rate: float = 0.0
+var max_overheal: float = 0.0
+var overheal_bonus_damage: int = 0
+
+## Speed
+var dash_distance_multiplier: float = 1.0
+var dash_cooldown_multiplier: float = 1.0
+var dash_contact_damage: int = 0
+var dash_invincible: bool = false
+var dash_phase_through: bool = false
+
+
+# ---------------------------------------------------------
+# PHYSICS PROCESS
+# ---------------------------------------------------------
+func _physics_process(delta: float) -> void:
+
+	# Always rotate to mouse when aiming/charging/dashing
+	if is_aiming or is_charging or is_dashing:
+		look_at(get_global_mouse_position())
+
+	# ------------------------------------------
+	# Charging (Left-click held)
+	# ------------------------------------------
+	if is_charging and !is_aiming:
 		charge += charge_rate * delta
 		charge = clamp(charge, 0.0, max_charge)
 
@@ -44,41 +92,110 @@ func _physics_process(delta: float) -> void:
 			is_overcharging = false
 			overcharge_timer = 0.0
 
+	# ------------------------------------------
+	# Dash movement
+	# ------------------------------------------
 	if is_dashing:
-		var speed = base_speed * (1.0 + charge)
+		dash_invincible_timer -= delta
+
+		var speed = base_speed * (1.0 + charge) * dash_distance_multiplier
 		var motion = dash_direction * speed * delta
 
-		var collision = move_and_collide(motion)
-		if collision:
+		var collision = move_and_collide(motion, false, false, !dash_phase_through)
+		if collision and !dash_phase_through:
 			handle_collision(collision)
+
+	# ------------------------------------------
+	# Passive regen
+	# ------------------------------------------
+	if regen_rate > 0 and !is_dashing and !is_charging:
+		health = min(health + regen_rate * delta, max_health + max_overheal)
+
+	# ------------------------------------------
+	# Shield regen
+	# ------------------------------------------
+	if shield_regen_rate > 0:
+		shield = min(shield + shield_regen_rate * delta, 3.0)
 
 	move_and_slide()
 	update_debug_ui()
 	update_player_visuals()
 
+
+# ---------------------------------------------------------
+# INPUT
+# ---------------------------------------------------------
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("click"):
+
+	# -----------------------------------------------------
+	# AIM MODE (RIGHT CLICK)
+	# -----------------------------------------------------
+	if event.is_action_pressed("aim_mode"):
+		is_aiming = true
+		Engine.time_scale = 0.25
+		return
+
+	if event.is_action_released("aim_mode"):
+		is_aiming = false
+		Engine.time_scale = 1.0
+		return
+
+
+
+	# -----------------------------------------------------
+	# NORMAL DASH CHARGE (LEFT CLICK) — ONLY IF NOT AIMING
+	# -----------------------------------------------------
+	if event.is_action_pressed("click") and !is_aiming:
 		charge = 0.0
 		is_charging = true
 		is_overcharging = false
 		overcharge_timer = 0.0
 		animate_debug_start()
 		animate_player_charge_start()
+		return
 
+
+	# -----------------------------------------------------
+	# RELEASE CHARGE → DASH
+	# -----------------------------------------------------
 	if event.is_action_released("click") and is_charging:
 		is_charging = false
 		is_overcharging = false
 		overcharge_timer = 0.0
 		Engine.time_scale = 1.0
+
 		dash_direction = global_position.direction_to(get_global_mouse_position())
 		is_dashing = true
+		first_hit_active = true
+
+		if dash_invincible:
+			dash_invincible_timer = dash_invincible_time
+
 		animate_debug_release()
 		animate_player_charge_end()
+		return
 
-func rotate_towards_mouse():
-	var mouse_pos = get_global_mouse_position()
-	rotation = (mouse_pos - global_position).angle()
 
+
+	# -----------------------------------------------------
+	# MID-AIR REDIRECT DASH (LEFT CLICK DURING AIM MODE)
+	# -----------------------------------------------------
+	if event.is_action_pressed("click") and is_aiming:
+
+		# override direction instantly
+		dash_direction = global_position.direction_to(get_global_mouse_position())
+
+		# ensure dash is active
+		is_dashing = true
+
+		# allow ONE more first-hit bonus for the redirect dash
+		first_hit_active = true
+
+		return
+
+# ---------------------------------------------------------
+# COLLISION
+# ---------------------------------------------------------
 func handle_collision(collision: KinematicCollision2D) -> void:
 	var collider = collision.get_collider()
 
@@ -90,28 +207,73 @@ func handle_collision(collision: KinematicCollision2D) -> void:
 
 	if collider is CharacterBody2D:
 		var normal = collision.get_normal()
-		dash_direction = dash_direction.bounce(normal).normalized() * bounce_multiplier
-		StatsManager.apply_knockback(collider, -normal * knockback_force * (1.0 + charge))
-		StatsManager.apply_damage(collider, round(charge))
 
+		dash_direction = dash_direction.bounce(normal).normalized() * bounce_multiplier
+
+		var total_damage = calculate_dash_damage()
+
+		StatsManager.apply_knockback(collider, -normal * knockback_force * (1.0 + charge))
+		StatsManager.apply_damage(collider, total_damage)
+
+		if shield_refill_on_hit:
+			shield = 1.0
+
+		if dash_phase_through and dash_contact_damage > 0:
+			StatsManager.apply_damage(collider, dash_contact_damage)
+
+
+# ---------------------------------------------------------
+# DAMAGE FORMULA
+# ---------------------------------------------------------
+func calculate_dash_damage() -> int:
+	var dmg = round(charge) * charge_damage_multiplier
+	dmg += dash_damage_bonus
+
+	if first_hit_active and first_hit_bonus > 0:
+		dmg += first_hit_bonus
+		first_hit_active = false
+
+	if health > max_health:
+		dmg += overheal_bonus_damage
+
+	return int(dmg)
+
+
+# ---------------------------------------------------------
+# OVERCHARGE
+# ---------------------------------------------------------
 func handle_overcharge(delta: float) -> void:
 	overcharge_timer += delta
 	if overcharge_timer >= overcharge_interval:
 		overcharge_timer = 0.0
 		apply_overcharge_damage()
 
+
 func apply_overcharge_damage() -> void:
+	if shield > 0:
+		shield -= 1
+		return
+
 	health -= overcharge_damage
 	if health <= 0:
 		die()
 
+
+# ---------------------------------------------------------
+# DEATH
+# ---------------------------------------------------------
 func die():
 	queue_free()
 
+
+# ---------------------------------------------------------
+# DEBUG UI
+# ---------------------------------------------------------
 func update_debug_ui():
 	var over_text := "\nOVERCHARGING!" if is_overcharging else ""
 	debug.text = "Charge: " + str(round(charge)) \
 		+ "\nHP: " + str(round(health)) \
+		+ "\nShield: " + str(round(shield)) \
 		+ over_text
 
 	var t := charge / max_charge
@@ -123,9 +285,22 @@ func update_debug_ui():
 		else mid_color.lerp(end_color, (t - 0.5) * 2.0))
 	debug.modulate = new_color
 
-func update_player_visuals():
-	modulate = Color(1, 0.3, 0.3) if is_overcharging else Color(1, 1, 1)
 
+# ---------------------------------------------------------
+# VISUALS
+# ---------------------------------------------------------
+func update_player_visuals():
+	if dash_invincible_timer > 0:
+		modulate = Color(0.3, 0.3, 1.0)
+	elif is_overcharging:
+		modulate = Color(1, 0.3, 0.3)
+	else:
+		modulate = Color(1, 1, 1)
+
+
+# ---------------------------------------------------------
+# ANIMATION TWEENS
+# ---------------------------------------------------------
 func animate_player_charge_start():
 	if body_tween.is_running(): body_tween.kill()
 	body_tween = create_tween()

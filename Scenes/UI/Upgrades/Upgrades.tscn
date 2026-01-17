@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://dywdlsqwyumd5"]
+
+[ext_resource type="Script" uid="uid://ua404xg3ybva" path="res://Scenes/UI/Upgrades/upgrade_panel.gd" id="1_w6fpb"]
+
+[node name="UPgradeUI" type="CanvasLayer"]
+
+[node name="UpgradePanel" type="Control" parent="." groups=["upgrade_manager"]]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_w6fpb")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UpgradePanel"]
+layout_mode = 0
+offset_left = 584.0
+offset_top = 249.0
+offset_right = 656.0
+offset_bottom = 377.0
+
+[node name="Panel" type="Panel" parent="UpgradePanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="option1" type="Button" parent="UpgradePanel/VBoxContainer"]
+layout_mode = 2
+text = "option 1"
+
+[node name="option2" type="Button" parent="UpgradePanel/VBoxContainer"]
+layout_mode = 2
+text = "option 2"
+
+[node name="option3" type="Button" parent="UpgradePanel/VBoxContainer"]
+layout_mode = 2
+text = "option 3"
+
+[node name="Label" type="Label" parent="UpgradePanel/VBoxContainer"]
+layout_mode = 2
