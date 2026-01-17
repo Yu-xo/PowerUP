@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://dywdlsqwyumd5"]
+[gd_scene load_steps=3 format=3 uid="uid://dywdlsqwyumd5"]
 
+[ext_resource type="Theme" uid="uid://c7q4gclv5h4h6" path="res://resources/uitheme.tres" id="1_4vroh"]
 [ext_resource type="Script" uid="uid://ua404xg3ybva" path="res://Scenes/UI/Upgrades/upgrade_panel.gd" id="1_w6fpb"]
 
 [node name="UPgradeUI" type="CanvasLayer"]
@@ -12,36 +13,52 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_4vroh")
 script = ExtResource("1_w6fpb")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UpgradePanel"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -125.0
+offset_right = 125.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="UpgradePanel/VBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="Panel" type="Panel" parent="UpgradePanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UpgradePanel/VBoxContainer/Panel"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -36.0
-offset_top = -66.0
-offset_right = 36.0
-offset_bottom = 66.0
+offset_left = -38.0
+offset_top = -56.5
+offset_right = 38.0
+offset_bottom = 56.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="UpgradePanel/VBoxContainer"]
-layout_mode = 2
-
-[node name="option1" type="Button" parent="UpgradePanel/VBoxContainer"]
+[node name="option1" type="Button" parent="UpgradePanel/VBoxContainer/Panel/VBoxContainer"]
 layout_mode = 2
 text = "option 1"
 
-[node name="option2" type="Button" parent="UpgradePanel/VBoxContainer"]
+[node name="option2" type="Button" parent="UpgradePanel/VBoxContainer/Panel/VBoxContainer"]
 layout_mode = 2
 text = "option 2"
 
-[node name="option3" type="Button" parent="UpgradePanel/VBoxContainer"]
+[node name="option3" type="Button" parent="UpgradePanel/VBoxContainer/Panel/VBoxContainer"]
 layout_mode = 2
 text = "option 3"
-
-[node name="Label" type="Label" parent="UpgradePanel/VBoxContainer"]
-layout_mode = 2

@@ -9,9 +9,9 @@ class_name UpgradeManager
 # Upgrade UI References INSIDE ui
 @onready var panel = $VBoxContainer/Panel
 @onready var title = $VBoxContainer/Label
-@onready var btn1 = $VBoxContainer/option1
-@onready var btn2 = $VBoxContainer/option2
-@onready var btn3 = $VBoxContainer/option3
+@onready var btn1 = $VBoxContainer/Panel/VBoxContainer/option1
+@onready var btn2 = $VBoxContainer/Panel/VBoxContainer/option2
+@onready var btn3 = $VBoxContainer/Panel/VBoxContainer/option3
 
 # Stores the upgrade choices
 var pending_choice_1: String

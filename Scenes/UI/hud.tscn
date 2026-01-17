@@ -1,6 +1,54 @@
-[gd_scene load_steps=2 format=3 uid="uid://dk0iudejhl0sr"]
+[gd_scene load_steps=9 format=3 uid="uid://dk0iudejhl0sr"]
 
 [ext_resource type="Script" uid="uid://bs18vve0a7wmo" path="res://Scenes/UI/hud.gd" id="1_sprlj"]
+[ext_resource type="Texture2D" uid="uid://cgtx2vau285lt" path="res://Assets/colorable_panel.png" id="2_ny26j"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fdl0h"]
+texture = ExtResource("2_ny26j")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(1, 0.74, 0.74, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8glcj"]
+texture = ExtResource("2_ny26j")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(0.805812, 0, 0.222058, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vsu76"]
+texture = ExtResource("2_ny26j")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(0.71, 0.859833, 1, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ux5h0"]
+texture = ExtResource("2_ny26j")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(0, 0.7, 1, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mqf2c"]
+texture = ExtResource("2_ny26j")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+modulate_color = Color(0.255659, 0.255659, 0.255659, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ny26j"]
+texture = ExtResource("2_ny26j")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_sprlj")
@@ -22,6 +70,9 @@ anchor_bottom = 1.0
 offset_top = -27.0
 offset_right = 64.0
 grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxTexture_fdl0h")
+theme_override_styles/fill = SubResource("StyleBoxTexture_8glcj")
+value = 10.0
 show_percentage = false
 
 [node name="Label" type="Label" parent="Control/HP"]
@@ -40,12 +91,45 @@ grow_vertical = 2
 text = "HP"
 horizontal_alignment = 1
 
+[node name="Shield" type="ProgressBar" parent="Control"]
+custom_minimum_size = Vector2(128, 16)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -57.0
+offset_right = 128.0
+offset_bottom = -30.0
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxTexture_vsu76")
+theme_override_styles/fill = SubResource("StyleBoxTexture_ux5h0")
+value = 10.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="Control/Shield"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "SHIELD"
+horizontal_alignment = 1
+
 [node name="charge" type="ProgressBar" parent="Control"]
 custom_minimum_size = Vector2(32, 128)
 layout_mode = 0
-offset_top = 202.0
+offset_top = 160.0
 offset_right = 32.0
-offset_bottom = 330.0
+offset_bottom = 288.0
+theme_override_styles/background = SubResource("StyleBoxTexture_mqf2c")
+theme_override_styles/fill = SubResource("StyleBoxTexture_ny26j")
 max_value = 10.0
 fill_mode = 3
 show_percentage = false

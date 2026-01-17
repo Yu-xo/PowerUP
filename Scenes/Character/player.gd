@@ -169,7 +169,9 @@ func _physics_process(delta: float) -> void:
 	# -----------------------------------------------------
 	#update_debug_ui()
 	update_player_visuals()
-
+	hud.hp_display = health / max_health * 100
+	hud.charge_display = charge / max_charge * 10.0
+	hud.shield_display = shield * 100
 
 # ---------------------------------------------------------
 # GHOST AFTERIMAGE SPAWNING
