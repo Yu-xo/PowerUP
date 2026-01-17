@@ -133,7 +133,7 @@ func spawn_wave_async(wave_data: Array) -> void:
 # ---------------------------------------------------
 func spawn_enemy(scene: PackedScene):
 	var enemy = scene.instantiate()
-	get_parent().add_child(enemy)
+	get_parent().call_deferred("add_child",enemy)
 
 	alive_enemies.append(enemy)
 	enemy.tree_exited.connect(_on_enemy_exit.bind(enemy), Object.CONNECT_ONE_SHOT)

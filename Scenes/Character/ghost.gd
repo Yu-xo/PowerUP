@@ -1,10 +1,10 @@
 extends Node2D
 
-@export var fade_time := 0.5
+@export var fade_time := 0.1
 
-func start(sprite_texture, global_pos, rotation):
+func start(sprite_texture, global_pos, global_rot):
 	global_position = global_pos
-	self.rotation = rotation
+	rotation = global_rot
 
 	var s: Sprite2D = $Sprite2D
 	s.texture = sprite_texture

@@ -14,6 +14,7 @@ outlines = Array[PackedVector2Array]([PackedVector2Array(-18, -17, -18, 377, 654
 [node name="Node2D" type="Node2D"]
 
 [node name="ColorRect" type="ColorRect" parent="."]
+z_index = -2
 offset_right = 640.0
 offset_bottom = 360.0
 color = Color(0, 0, 0, 1)

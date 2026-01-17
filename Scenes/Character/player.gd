@@ -14,7 +14,7 @@ extends CharacterBody2D
 @export var knockback_force: float = 200.0
 @export var slowmo_factor: float = 0.3
 
-@onready var debug: Label = $CanvasLayer/Debug
+#@onready var debug: Label = $CanvasLayer/Debug
 @onready var tween := create_tween()
 @onready var body_tween := create_tween()
 
@@ -24,9 +24,12 @@ extends CharacterBody2D
 var last_pos: Vector2
 
 # === AFTERIMAGE SETTINGS ===
-@export var ghost_interval := 0.04
+@export var ghost_interval := 0.01
 @export var ghost_scene = preload("res://Scenes/Character/ghost.tscn")
 var ghost_timer := 0.0
+
+# === HUD nodes ===
+@onready var hud: CanvasLayer = $HUD
 
 # ---------------------------------------------------------
 # RUNTIME VALUES
@@ -88,14 +91,14 @@ func _physics_process(delta: float) -> void:
 	# -----------------------------------------------------
 	# 1. VELOCITY → SHADER + SQUASH/STRETCH
 	# -----------------------------------------------------
-	var vel := (global_position - last_pos) / delta
-
-	if mat and mat.shader:
-		mat.set_shader_parameter("velocity", vel)
-
-	update_speed_scale(vel.length())
-
-	last_pos = global_position
+	#var vel := (global_position - last_pos) / delta
+#
+	#if mat and mat.shader:
+		#mat.set_shader_parameter("velocity", vel)
+#
+	#update_speed_scale(vel.length())
+#
+	#last_pos = global_position
 
 	# -----------------------------------------------------
 	# 2. GHOST AFTERIMAGE (Only while dashing)
@@ -164,7 +167,7 @@ func _physics_process(delta: float) -> void:
 	# -----------------------------------------------------
 	# 9. DEBUG + VISUALS
 	# -----------------------------------------------------
-	update_debug_ui()
+	#update_debug_ui()
 	update_player_visuals()
 
 
@@ -219,7 +222,7 @@ func _input(event: InputEvent) -> void:
 		is_charging = true
 		is_overcharging = false
 		overcharge_timer = 0.0
-		animate_debug_start()
+		#animate_debug_start()
 		animate_player_charge_start()
 		return
 
@@ -237,7 +240,7 @@ func _input(event: InputEvent) -> void:
 		if dash_invincible:
 			dash_invincible_timer = dash_invincible_time
 
-		animate_debug_release()
+		#animate_debug_release()
 		animate_player_charge_end()
 		return
 
@@ -328,26 +331,26 @@ func die():
 # ---------------------------------------------------------
 # DEBUG TEXT
 # ---------------------------------------------------------
-func update_debug_ui():
-
-	var over_text := "\nOVERCHARGING!" if is_overcharging else ""
-	debug.text = "Charge: " + str(round(charge)) \
-		+ "\nHP: " + str(round(health)) \
-		+ "\nShield: " + str(round(shield)) \
-		+ over_text
-
-	var t := charge / max_charge
-	var start_color := Color(0.2, 1.0, 0.2)
-	var mid_color := Color(1.0, 1.0, 0.2)
-	var end_color := Color(1.0, 0.2, 0.2)
-
-	var new_color := (
-		start_color.lerp(mid_color, t * 2.0)
-		if t < 0.5
-		else mid_color.lerp(end_color, (t - 0.5) * 2.0)
-	)
-	debug.modulate = new_color
-
+#func update_debug_ui():
+#
+	#var over_text := "\nOVERCHARGING!" if is_overcharging else ""
+	#debug.text = "Charge: " + str(round(charge)) \
+		#+ "\nHP: " + str(round(health)) \
+		#+ "\nShield: " + str(round(shield)) \
+		#+ over_text
+#
+	#var t := charge / max_charge
+	#var start_color := Color(0.2, 1.0, 0.2)
+	#var mid_color := Color(1.0, 1.0, 0.2)
+	#var end_color := Color(1.0, 0.2, 0.2)
+#
+	#var new_color := (
+		#start_color.lerp(mid_color, t * 2.0)
+		#if t < 0.5
+		#else mid_color.lerp(end_color, (t - 0.5) * 2.0)
+	#)
+	#debug.modulate = new_color
+#
 
 
 # ---------------------------------------------------------
@@ -378,16 +381,16 @@ func animate_player_charge_end():
 	body_tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.25)\
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
-
-func animate_debug_start():
-	if tween.is_running(): tween.kill()
-	tween = create_tween()
-	tween.tween_property(debug, "scale", Vector2(1.3, 1.3), 0.15)\
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-
-
-func animate_debug_release():
-	if tween.is_running(): tween.kill()
-	tween = create_tween()
-	tween.tween_property(debug, "scale", Vector2(1.0, 1.0), 0.2)\
-		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+#
+#func animate_debug_start():
+	#if tween.is_running(): tween.kill()
+	#tween = create_tween()
+	#tween.tween_property(debug, "scale", Vector2(1.3, 1.3), 0.15)\
+		#.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+#
+#
+#func animate_debug_release():
+	#if tween.is_running(): tween.kill()
+	#tween = create_tween()
+	#tween.tween_property(debug, "scale", Vector2(1.0, 1.0), 0.2)\
+		#.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

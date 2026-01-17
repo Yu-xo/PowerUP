@@ -132,8 +132,8 @@ func _on_option3():
 # ---------------------------------------------------------
 # APPLY UPGRADE + HIDE UI + UNPAUSE
 # ---------------------------------------------------------
-func apply_upgrade(name: String):
-	var data = UPGRADES[name]
+func apply_upgrade(powerup_name: String):
+	var data = UPGRADES[powerup_name]
 	data["apply"].call(player)
 
 	ui.visible = false         # Hide entire UI again

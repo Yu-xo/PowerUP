@@ -1,10 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://dc41wcuphj3yv"]
+[gd_scene load_steps=5 format=3 uid="uid://dc41wcuphj3yv"]
 
 [ext_resource type="Script" uid="uid://crf0acd208fv5" path="res://Scenes/Character/ghost.gd" id="1_gsdkm"]
 [ext_resource type="Texture2D" uid="uid://dv6xgdwfq0jdr" path="res://Assets/Hana Caraka - Base Character [sample]/Player/knighty_idle.webp" id="2_gsdkm"]
+[ext_resource type="Shader" uid="uid://5h24ucacl8nl" path="res://Scenes/Character/ghost.gdshader" id="2_y18vv"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7lgfk"]
+shader = ExtResource("2_y18vv")
 
 [node name="Ghost" type="Node2D"]
+z_index = -1
 script = ExtResource("1_gsdkm")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_7lgfk")
 texture = ExtResource("2_gsdkm")

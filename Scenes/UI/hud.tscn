@@ -1,0 +1,51 @@
+[gd_scene load_steps=2 format=3 uid="uid://dk0iudejhl0sr"]
+
+[ext_resource type="Script" uid="uid://bs18vve0a7wmo" path="res://Scenes/UI/hud.gd" id="1_sprlj"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_sprlj")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HP" type="ProgressBar" parent="Control"]
+custom_minimum_size = Vector2(128, 16)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -27.0
+offset_right = 64.0
+grow_vertical = 0
+show_percentage = false
+
+[node name="Label" type="Label" parent="Control/HP"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "HP"
+horizontal_alignment = 1
+
+[node name="charge" type="ProgressBar" parent="Control"]
+custom_minimum_size = Vector2(32, 128)
+layout_mode = 0
+offset_top = 202.0
+offset_right = 32.0
+offset_bottom = 330.0
+max_value = 10.0
+fill_mode = 3
+show_percentage = false
