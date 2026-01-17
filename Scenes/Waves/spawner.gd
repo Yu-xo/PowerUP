@@ -66,9 +66,7 @@ func _ready():
 		enemy_type_5
 	]
 
-	if not player: push_error("Player not found in group 'player'!"); return
-	if not mid: push_error("mid node not found in group 'mid'!"); return
-	if not upgrade_manager: push_error("UpgradeManager not found in group 'upgrade_manager'!"); return
+
 
 	start_wave(0)
 
@@ -171,11 +169,8 @@ func spawn_enemy(scene: PackedScene):
 
 	monitor_enemy_bounds(enemy)
 	enemy_sanity_monitor(enemy)
-	kill_after_time(enemy, 15.0)   # <-- new line, auto-kill after 15 seconds
-func kill_after_time(enemy: Node2D, time: float) -> void:
-	await get_tree().create_timer(time).timeout
-	if is_instance_valid(enemy):
-		print("Enemy auto-killed after", time, "seconds")
+
+
 
 
 

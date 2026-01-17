@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://dc41wcuphj3yv"]
+
+[ext_resource type="Script" uid="uid://crf0acd208fv5" path="res://Scenes/Character/ghost.gd" id="1_gsdkm"]
+[ext_resource type="Texture2D" uid="uid://dv6xgdwfq0jdr" path="res://Assets/Hana Caraka - Base Character [sample]/Player/knighty_idle.webp" id="2_gsdkm"]
+
+[node name="Ghost" type="Node2D"]
+script = ExtResource("1_gsdkm")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_gsdkm")
