@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b7uaw4tdwcryo"
-path="res://.godot/imported/rotate.png-ae656025bd73108c4b56286198a92a3f.ctex"
+uid="uid://57q2mf3ce3w8"
+path="res://.godot/imported/sheepy.png-d57a3324dbf7c3810edaa3c1610c9268.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Hana Caraka - Base Character [sample]/Player/rotate.png"
-dest_files=["res://.godot/imported/rotate.png-ae656025bd73108c4b56286198a92a3f.ctex"]
+source_file="res://Assets/sheepy.png"
+dest_files=["res://.godot/imported/sheepy.png-d57a3324dbf7c3810edaa3c1610c9268.ctex"]
 
 [params]
 

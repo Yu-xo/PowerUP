@@ -7,9 +7,9 @@
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_wyxvx"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_wyxvx"]
-vertices = PackedVector2Array(1306.3828, 713.0469, -45.109375, 719.9375, -53.882813, -66.25, 1257.5938, -99.75)
+vertices = PackedVector2Array(636.188, 1.85938, 643.781, 374.867, -8, 367.109, -8, -6.85938)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-64, -76, -55, 730, 1317, 723, 1267, -110)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-18, -17, -18, 377, 654, 385, 646, -8)])
 
 [node name="Node2D" type="Node2D"]
 
