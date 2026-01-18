@@ -172,6 +172,7 @@ limit_right = 1152
 limit_bottom = 648
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+process_mode = 3
 stream = ExtResource("5_jbeyo")
 volume_db = 5.0
 autoplay = true
