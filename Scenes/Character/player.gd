@@ -152,22 +152,7 @@ func _physics_process(delta):
 	move_and_slide()
 
 	update_player_visuals()
-<<<<<<< ours
-	hud.hp_display = health / max_health * 100
-	hud.charge_display = charge / max_charge * 10.0
-	hud.shield_display = shield * 100
-
-# ---------------------------------------------------------
-# GHOST AFTERIMAGE SPAWNING
-# ---------------------------------------------------------
-func spawn_ghost():
-	var g = ghost_scene.instantiate()
-	get_tree().current_scene.add_child(g)
-	g.start(player_sprite.texture, global_position, rotation)
-
-=======
 	update_hud()
->>>>>>> theirs
 
 # ---------------------------------------------------------
 # HUD
