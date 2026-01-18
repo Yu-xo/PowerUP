@@ -8,13 +8,15 @@ class_name FollowerEnemy
 var state_timer: float = 0.0
 var is_resting: bool = true
 
+@onready var sprite_2d: AnimatedSprite2D = $Sprite2D
+
 func _ready():
 	super._ready()
 	speed = follow_speed
 	state_timer = rest_duration
 
 func _physics_process(delta: float) -> void:
-
+	sprite_2d.flip_h = to_local(player.global_position).x < 0
 	# Base handles knockback & stun
 	if stun_timer > 0:
 		stun_timer -= delta

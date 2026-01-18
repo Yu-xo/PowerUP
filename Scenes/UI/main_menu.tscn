@@ -161,6 +161,7 @@ tile_set = SubResource("TileSet_u7lva")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_u7lva")
+volume_db = 5.0
 autoplay = true
 
 [connection signal="button_down" from="Panel/VBoxContainer/start" to="." method="_on_start_button_down"]

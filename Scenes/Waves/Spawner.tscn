@@ -33,3 +33,13 @@ offset_left = 285.0
 offset_top = 200.0
 offset_right = 325.0
 offset_bottom = 223.0
+
+[node name="end" type="Label" parent="wave_banner"]
+visible = false
+layout_mode = 0
+offset_left = 216.0
+offset_top = 270.0
+offset_right = 394.0
+offset_bottom = 302.0
+text = "...you can close the page now"
+horizontal_alignment = 1

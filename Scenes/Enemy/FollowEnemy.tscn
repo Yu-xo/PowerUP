@@ -1,21 +1,48 @@
-[gd_scene load_steps=4 format=3 uid="uid://kcrvt8nwopd5"]
+[gd_scene load_steps=8 format=3 uid="uid://kcrvt8nwopd5"]
 
 [ext_resource type="Script" uid="uid://d2vo6h1cirstk" path="res://Scenes/Enemy/follow_enemy.gd" id="1_bky8x"]
+[ext_resource type="Texture2D" uid="uid://l8xr8p8m1h2g" path="res://Assets/evilfella.png" id="2_ms7en"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_w0u4p"]
-size = Vector2(36, 34)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ms7en"]
+radius = 6.0
 
-[sub_resource type="QuadMesh" id="QuadMesh_w0u4p"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_dr82t"]
+atlas = ExtResource("2_ms7en")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m6jss"]
+atlas = ExtResource("2_ms7en")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rkqah"]
+atlas = ExtResource("2_ms7en")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_buwji"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dr82t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m6jss")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rkqah")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="FollowEnemy" type="CharacterBody2D"]
 script = ExtResource("1_bky8x")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_w0u4p")
-
-[node name="MeshInstance2D" type="MeshInstance2D" parent="."]
-modulate = Color(0.3882353, 1, 0.3882353, 1)
-scale = Vector2(30, 32)
-mesh = SubResource("QuadMesh_w0u4p")
+shape = SubResource("CapsuleShape2D_ms7en")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_buwji")
+offset = Vector2(3, 17)

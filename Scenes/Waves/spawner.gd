@@ -113,6 +113,7 @@ func update_wave_text(idx: int):
 func start_wave(wave_index: int):
 	if wave_index >= waves.size():
 		show_wave_banner("ALL WAVES CLEARED!")
+		$wave_banner/end.show()
 		return
 
 	current_wave = wave_index

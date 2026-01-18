@@ -3,8 +3,7 @@
 [ext_resource type="Script" uid="uid://c2qcia6smnhmt" path="res://Scenes/Enemy/mob_1.gd" id="1_l3oe2"]
 [ext_resource type="Texture2D" uid="uid://57q2mf3ce3w8" path="res://Assets/sheepy.png" id="2_snega"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_i7khw"]
-size = Vector2(34, 34)
+[sub_resource type="CircleShape2D" id="CircleShape2D_snega"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ypklj"]
 atlas = ExtResource("2_snega")
@@ -43,8 +42,7 @@ script = ExtResource("1_l3oe2")
 max_health = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 1)
-shape = SubResource("RectangleShape2D_i7khw")
+shape = SubResource("CircleShape2D_snega")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 avoidance_enabled = true
@@ -54,3 +52,4 @@ debug_enabled = true
 sprite_frames = SubResource("SpriteFrames_wtb6f")
 autoplay = "default"
 frame_progress = 0.559004
+offset = Vector2(-2, -3)
