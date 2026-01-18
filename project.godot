@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="MinJam:PowerUP"
-run/main_scene="uid://ch1qao0xjo4fi"
-config/features=PackedStringArray("4.6", "Forward Plus")
+run/main_scene="uid://b00210thpmafp"
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -36,6 +36,7 @@ upgrade_manager=""
 
 [gui]
 
+theme/default_font_antialiasing=0
 theme/custom_font="uid://cagx44qxaw7b2"
 
 [input]

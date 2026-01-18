@@ -191,7 +191,7 @@ func _on_enemy_exit(enemy):
 # ---------------------------------------------------
 func wait_for_wave_to_finish():
 	while true:
-		if !get_tree(): continue
+		if !get_tree(): break
 		for e in alive_enemies.duplicate():
 			if not is_instance_valid(e):
 				alive_enemies.erase(e)
@@ -204,7 +204,7 @@ func wait_for_wave_to_finish():
 # ---------------------------------------------------
 func monitor_enemy_bounds(enemy):
 	while is_instance_valid(enemy):
-		if !get_tree(): continue
+		if !get_tree(): break
 		var d = enemy.global_position.distance_to(mid.global_position)
 		if d > arena_bound:
 			alive_enemies.erase(enemy)
