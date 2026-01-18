@@ -37,7 +37,10 @@ func set_charge(value: float, max_charge: float, is_overcharging: bool = false):
 	if is_overcharging:
 		charge.modulate = Color(1.0, 0.5, 0.5)     # reddish tint
 	else:
-		charge.modulate = Color(1.0, 1.0, 1.0)     # normal
+		if value > 3.0:
+			charge.modulate = Color(0.0, 1.0, 0.0)
+		else:
+			charge.modulate = Color(1.0, 1.0, 1.0)     # normal
 
 
 # ---------------------------------------------------------

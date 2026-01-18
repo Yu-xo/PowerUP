@@ -12,4 +12,4 @@ func start(sprite_texture, global_pos, global_rot):
 
 	var tween = create_tween()
 	tween.tween_property(self, "modulate:a", 0.0, fade_time)
-	tween.tween_callback(Callable(self, "queue_free"))
+	tween.tween_callback(queue_free)

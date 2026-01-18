@@ -216,6 +216,8 @@ func handle_collision(collision):
 
 	# Wall
 	if collider is StaticBody2D or collider is TileMap:
+		is_dashing = false
+		charge = 0.0
 		return
 
 	if collider is CharacterBody2D:
@@ -315,7 +317,11 @@ func apply_overcharge_damage():
 # DEATH
 # ---------------------------------------------------------
 func die():
-	queue_free()
+	hide()
+	set_physics_process(false)
+	set_process_input(false)
+	await get_tree().create_timer(3.0).timeout
+	get_tree().change_scene_to_file("res://Scenes/UI/main_menu.tscn")
 
 # ---------------------------------------------------------
 # VISUAL STATES
@@ -347,6 +353,5 @@ func animate_player_charge_end():
 # ---------------------------------------------------------
 func spawn_ghost():
 	var g = ghost_scene.instantiate()
-	g.z_index = 9999
 	get_tree().current_scene.add_child(g)
 	g.start(player_sprite.texture, global_position, rotation)
