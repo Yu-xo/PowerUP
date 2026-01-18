@@ -2,7 +2,7 @@ extends Node2D
 class_name WaveSpawner
 
 # ---------------------------------------------------
-# Enemy Types
+# ENEMY SCENES
 # ---------------------------------------------------
 @export var enemy_type_1: PackedScene
 @export var enemy_type_2: PackedScene
@@ -11,53 +11,57 @@ class_name WaveSpawner
 @export var enemy_type_5: PackedScene
 
 # ---------------------------------------------------
-# Waves
+# UI References
 # ---------------------------------------------------
-var waves = [
-	[
-		{"enemy": 1, "count": 2},
-	],
-	[
-		{"enemy": 1, "count": 4},
-		{"enemy": 3, "count": 2}
-	],
-	[
-		{"enemy": 4, "count": 3},
-		{"enemy": 2, "count": 2},
-		{"enemy": 5, "count": 1}
-	]
-]
+@onready var wave_banner: Control = $wave_banner
+@onready var wave_number: Label = $wave_banner/Wave_Number
+@onready var wave_banner_label: Label = $wave_banner/wave_banner_label
 
-# ---------------------------------------------------
-# Settings
-# ---------------------------------------------------
-var spawn_delay := 0.35
-var wave_delay := 2.0
-var spawn_area_half := 250.0
-var post_wave_upgrade_delay := 2.0
-var arena_bound := 1200.0
-
-# ---------------------------------------------------
-# Runtime References
-# ---------------------------------------------------
 @onready var mid = get_tree().get_first_node_in_group("mid")
-@onready var player = get_tree().get_first_node_in_group("player")
 @onready var upgrade_manager = get_tree().get_first_node_in_group("upgrade_manager")
 
 # ---------------------------------------------------
-# Internal
+# WAVES (Corrected)
 # ---------------------------------------------------
-var enemy_list: Array = []
-var alive_enemies: Array = []        # real enemy tracking
-var current_wave: int = 0
+var waves = [
+	[{"enemy": 1, "count": 2}],
+	[
+		{"enemy": 1, "count": 4},
+		{"enemy": 2, "count": 2}
+	],
+	[
+		{"enemy": 2, "count": 2},
+		{"enemy": 1, "count": 2},
+		{"enemy": 3, "count": 1}
+	],
+	[
+		{"enemy": 2, "count": 2},
+		{"enemy": 1, "count": 2},
+		{"enemy": 3, "count": 1}
+	],
+	[
+		{"enemy": 2, "count": 2},
+		{"enemy": 1, "count": 2},
+		{"enemy": 3, "count": 1}
+	],
+]
 
+# ---------------------------------------------------
+# SETTINGS
+# ---------------------------------------------------
+var spawn_delay := 0.3
+var wave_delay := 1.4
+var spawn_area_half := 260.0
+var arena_bound := 1200.0
+
+var enemy_list: Array = []
+var alive_enemies: Array = []
+var current_wave := 0
 
 # ---------------------------------------------------
 # READY
 # ---------------------------------------------------
 func _ready():
-	print("WaveSpawner: Initializing...")
-
 	enemy_list = [
 		enemy_type_1,
 		enemy_type_2,
@@ -66,28 +70,58 @@ func _ready():
 		enemy_type_5
 	]
 
-
-
+	show_wave_banner("WAVE 1 START")
+	update_wave_text(0)
 	start_wave(0)
 
+# ---------------------------------------------------
+# UI BANNER (INTENSITY BOOSTED)
+# ---------------------------------------------------
+func show_wave_banner(text: String) -> Tween:
+	wave_banner_label.text = text
+
+	# Reset
+	wave_banner.position.y = -200
+	wave_banner_label.modulate.a = 0
+
+	var t = create_tween()
+
+	# Drop fast + overshoot
+	t.tween_property(wave_banner, "position:y", 40, 0.33)\
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+	# Fade text
+	t.parallel().tween_property(wave_banner_label, "modulate:a", 1.0, 0.25)
+
+	# Hold
+	t.tween_interval(1.15)
+
+	# Fade + slide up harder
+	t.tween_property(wave_banner_label, "modulate:a", 0.0, 0.25)
+	t.tween_property(wave_banner, "position:y", -200, 0.35)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+	return t  # important (we wait for this)
+
+# ---------------------------------------------------
+func update_wave_text(idx: int):
+	wave_number.text = "Wave: " + str(idx + 1)
 
 # ---------------------------------------------------
 # START WAVE
 # ---------------------------------------------------
 func start_wave(wave_index: int):
 	if wave_index >= waves.size():
-		print("ALL WAVES COMPLETED!")
+		show_wave_banner("ALL WAVES CLEARED!")
 		return
 
 	current_wave = wave_index
+	update_wave_text(current_wave)
 
-	print("\n==============================")
-	print("Starting Wave:", current_wave + 1)
-	print("==============================\n")
+	await show_wave_banner("WAVE " + str(current_wave + 1) + " START").finished
 
 	alive_enemies.clear()
-	spawn_wave(waves[wave_index])
-
+	spawn_wave(waves[current_wave])
 
 # ---------------------------------------------------
 # SPAWN WAVE
@@ -95,157 +129,119 @@ func start_wave(wave_index: int):
 func spawn_wave(wave_data: Array):
 	spawn_wave_async(wave_data)
 
-
 func spawn_wave_async(wave_data: Array) -> void:
 	for entry in wave_data:
-		var enemy_index = entry["enemy"] - 1
-		var count = entry["count"]
-
-		if enemy_index < 0 or enemy_index >= enemy_list.size(): continue
-		var scene: PackedScene = enemy_list[enemy_index]
-		if not scene: continue
-
-		print("Spawning", count, "x Enemy Type", enemy_index + 1)
-
-		for i in count:
-			spawn_enemy(scene)
+		for i in entry["count"]:
+			spawn_enemy(enemy_list[entry["enemy"] - 1])
 			await get_tree().create_timer(spawn_delay).timeout
-
-	print("All enemies spawned. Waiting...")
 
 	await wait_for_wave_to_finish()
 
-	print("Wave", current_wave + 1, "cleared!")
+	# WAVE OVER TEXT
+	await show_wave_banner("WAVE " + str(current_wave + 1) + " COMPLETE").finished
+	await show_wave_banner("CHOOSE YOUR POWER UP").finished
 
-	# Show upgrade UI
+	# Drop Upgrade UI (Bounce)
 	if upgrade_manager:
 		upgrade_manager.show_upgrades()
 
-	print("Waiting", post_wave_upgrade_delay, "seconds before next wave...")
-	await get_tree().create_timer(post_wave_upgrade_delay).timeout
+	await get_tree().create_timer(1.0).timeout
 
+	show_wave_banner("NEXT WAVE INCOMING")
 	await get_tree().create_timer(wave_delay).timeout
+
 	start_wave(current_wave + 1)
 
-
 # ---------------------------------------------------
-# SPAWN ENEMY SAFE
+# SAFE SPAWNING
 # ---------------------------------------------------
 func spawn_enemy(scene: PackedScene):
 	var enemy = scene.instantiate()
-	get_parent().call_deferred("add_child",enemy)
+	get_parent().call_deferred("add_child", enemy)
 
 	alive_enemies.append(enemy)
 	enemy.tree_exited.connect(_on_enemy_exit.bind(enemy), Object.CONNECT_ONE_SHOT)
 
 	var center = mid.global_position
-	var spawn_pos := Vector2.ZERO
-	var max_attempts := 25
+	var pos = center
 
-	for i in max_attempts:
-		var try_pos := Vector2(
-			center.x + randf_range(-spawn_area_half, spawn_area_half),
-			center.y + randf_range(-spawn_area_half, spawn_area_half)
-		)
-
-		var too_close := false
+	for i in 25:
+		var try_pos = center + Vector2(randf_range(-spawn_area_half, spawn_area_half), randf_range(-spawn_area_half, spawn_area_half))
+		var ok := true
 
 		for other in alive_enemies:
 			if other != enemy and is_instance_valid(other):
-				if try_pos.distance_to(other.global_position) < 48.0:
-					too_close = true
+				if try_pos.distance_to(other.global_position) < 48:
+					ok = false
 					break
 
-		if not too_close:
-			spawn_pos = try_pos
+		if ok:
+			pos = try_pos
 			break
 
-	if spawn_pos == Vector2.ZERO:
-		spawn_pos = center
-
-	enemy.global_position = spawn_pos
-
-	print("Spawned SAFE enemy at:", spawn_pos)
+	enemy.global_position = pos
 
 	monitor_enemy_bounds(enemy)
 	enemy_sanity_monitor(enemy)
 
-
-
-
-
-# ---------------------------------------------------
-# ENEMY DEATH / REMOVAL HANDLER
 # ---------------------------------------------------
 func _on_enemy_exit(enemy):
-	if alive_enemies.has(enemy):
-		alive_enemies.erase(enemy)
-
-	print("Enemy removed. Remaining:", alive_enemies.size())
-
+	alive_enemies.erase(enemy)
 
 # ---------------------------------------------------
-# OUT OF BOUNDS CHECK
-# ---------------------------------------------------
-func monitor_enemy_bounds(enemy: Node2D) -> void:
+func wait_for_wave_to_finish():
 	while true:
-		if not is_instance_valid(enemy): return
+		for e in alive_enemies.duplicate():
+			if not is_instance_valid(e):
+				alive_enemies.erase(e)
 
-		if enemy.global_position.distance_to(mid.global_position) > arena_bound:
-			print("Enemy out of bounds → removed")
+		if alive_enemies.size() == 0:
+			return
+
+		await get_tree().process_frame
+
+# ---------------------------------------------------
+func monitor_enemy_bounds(enemy):
+	while is_instance_valid(enemy):
+		var d = enemy.global_position.distance_to(mid.global_position)
+		if d > arena_bound:
 			alive_enemies.erase(enemy)
 			enemy.queue_free()
 			return
-
 		await get_tree().process_frame
 
-
 # ---------------------------------------------------
-# WAIT FOR ALL ENEMIES
-# ---------------------------------------------------
-func wait_for_wave_to_finish() -> void:
-	while alive_enemies.size() > 0:
-		await get_tree().process_frame
-
-	print("All enemies cleared!")
-
-
-# ---------------------------------------------------
-# DETECT STUCK ENEMIES
-# ---------------------------------------------------
-func enemy_sanity_monitor(enemy: Node2D) -> void:
-	# Wait until enemy is fully added to scene
+func enemy_sanity_monitor(enemy):
 	await get_tree().process_frame
-
 	if not is_instance_valid(enemy):
 		return
 
+	var last_pos = enemy.global_position
 	var stuck_time := 0.0
-	var last_pos := enemy.global_position
 
 	while true:
 
-		if not is_instance_valid(enemy):
-			return
-
+		# Wait some time
 		await get_tree().create_timer(0.3).timeout
-		if not is_instance_valid(enemy):
+
+		# Enemy may have been destroyed while waiting
+		if enemy == null or not is_instance_valid(enemy):
 			return
 
 		var current_pos = enemy.global_position
 
-		# If enemy didn't move AT ALL
+		# Compare positions
 		if current_pos == last_pos:
 			stuck_time += 0.3
 		else:
-			stuck_time = 0.0   # reset if moving
+			stuck_time = 0.0
 
 		last_pos = current_pos
 
-		# If stuck for more than 4 seconds → remove
+		# Stuck too long → remove
 		if stuck_time >= 4.0:
-			print("Enemy frozen (Vector2.ZERO no movement) → removed")
 			if alive_enemies.has(enemy):
 				alive_enemies.erase(enemy)
-			enemy.queue_free()
+			if is_instance_valid(enemy):
+				enemy.queue_free()
 			return

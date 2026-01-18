@@ -3,138 +3,167 @@ class_name UpgradeManager
 
 @onready var player = get_tree().get_first_node_in_group("player")
 
-# The ENTIRE upgrade UI container
 @onready var ui = $VBoxContainer
-
-# Upgrade UI References INSIDE ui
 @onready var panel = $VBoxContainer/Panel
 @onready var title = $VBoxContainer/Label
 @onready var btn1 = $VBoxContainer/Panel/VBoxContainer/option1
 @onready var btn2 = $VBoxContainer/Panel/VBoxContainer/option2
 @onready var btn3 = $VBoxContainer/Panel/VBoxContainer/option3
 
-# Stores the upgrade choices
 var pending_choice_1: String
 var pending_choice_2: String
 var pending_choice_3: String
 
+# Tier selection
+var has_speed_upgrade := false
+var has_hp_upgrade := false
 
-# ---------------------------------------------------------
-# READY → HIDE WHOLE UI ALWAYS
-# ---------------------------------------------------------
 func _ready():
-	ui.visible = false     # Hide everything on game start
+	ui.visible = false
 
-	btn1.pressed.connect(_on_option1)
-	btn2.pressed.connect(_on_option2)
-	btn3.pressed.connect(_on_option3)
+	btn1.pressed.connect(_on_button_pressed.bind(btn1, 1))
+	btn2.pressed.connect(_on_button_pressed.bind(btn2, 2))
+	btn3.pressed.connect(_on_button_pressed.bind(btn3, 3))
 
-
-# ---------------------------------------------------------
-# UPGRADE DATASET
-# ---------------------------------------------------------
-var UPGRADES = {
-	"Impact Boost": {
-		"apply": func(p):
-	p.knockback_force += 40
-	p.dash_damage_bonus += 1
-	},
-	"Kinetic Surge": {
-		"apply": func(p):
-	p.bounce_multiplier += 0.15
-	p.charge_damage_multiplier = 1.2
-	},
-	"Hyper Collision Core": {
-		"apply": func(p):
-	p.first_hit_bonus = 5
-	p.bounce_damage_multiplier = 2.0
-	},
-	"Reactive Shielding": {
-		"apply": func(p):
-	p.shield_regen_rate = 0.1
-	},
-	"Overcharge Dampener": {
-		"apply": func(p):
-	p.overcharge_damage *= 0.5
-	},
-	"Phase Barrier": {
-		"apply": func(p):
-	p.dash_invincible_time = 0.2
-	p.shield_refill_on_hit = true
-	},
-	"Vital Booster": {
-		"apply": func(p):
-	p.max_health += 2
+# -----------------------------------------------------------------------------------
+# MAIN TIER 1
+# -----------------------------------------------------------------------------------
+var UPGRADE_POOL = {
+	"Speed Boost": func(p):
+	p.base_speed += 20
+	has_speed_upgrade = true
+	,
+	"Shrink Body": func(p):
+	p.scale -= Vector2(0.5, 0.5)
+	,
+	"Max HP +1": func(p):
+	p.max_health += 1
 	p.health = p.max_health
-	},
-	"Nanite Regeneration": {
-		"apply": func(p):
-	p.regen_rate = 0.25
-	},
-	"Bio-Overheal Engine": {
-		"apply": func(p):
-	p.max_overheal = 3
-	p.overheal_bonus_damage = 2
-	},
-	"Velocity Tuner": {
-		"apply": func(p):
-	p.base_speed *= 1.2
-	p.charge_rate *= 1.2
-	},
-	"Dash Streamlining": {
-		"apply": func(p):
-	p.dash_distance_multiplier = 1.1
-	p.dash_cooldown_multiplier = 0.6
-	},
-	"Phantom Dash": {
-		"apply": func(p):
-	p.dash_invincible = true
-	p.dash_phase_through = true
-	p.dash_contact_damage = 1
-	},
+	has_hp_upgrade = true
+	,
+	"Max Charge +1": func(p):
+		p.max_charge += 1
 }
 
+# -----------------------------------------------------------------------------------
+# TIER 2 SPEED
+# -----------------------------------------------------------------------------------
+func speed_secondary_upgrades():
+	var list = {}
+	if has_speed_upgrade:
+		list["Bounce +1 From Walls"] = func(p):
+			p.bounce_multiplier += 1
 
-# ---------------------------------------------------------
-# SHOW PANEL WHEN WAVE ENDS
-# ---------------------------------------------------------
+		list["Pierce Enemies (HP < 2)"] = func(p):
+			p.can_pierce_low_hp = true
+	return list
+
+# -----------------------------------------------------------------------------------
+# TIER 2 HP
+# -----------------------------------------------------------------------------------
+func hp_secondary_upgrades():
+	var list = {}
+	if has_hp_upgrade:
+		list["Regain HP Every 3 Kills"] = func(p):
+			p.has_hp_regen_on_kill = true
+
+		list["Gain Shield After HP Regen"] = func(p):
+			p.has_shield_after_regen = true
+	return list
+
+# -----------------------------------------------------------------------------------
+# SHOW UPGRADES
+# -----------------------------------------------------------------------------------
 func show_upgrades():
-	var keys = UPGRADES.keys()
-	keys.shuffle()
 
-	pending_choice_1 = keys[0]
-	pending_choice_2 = keys[1]
-	pending_choice_3 = keys[2]
+	var choices = []
+
+	if not has_speed_upgrade:
+		choices.append("Speed Boost")
+	if not has_hp_upgrade:
+		choices.append("Max HP +1")
+
+	choices.append("Shrink Body")
+	choices.append("Max Charge +1")
+
+	for key in speed_secondary_upgrades().keys():
+		choices.append(key)
+	for key in hp_secondary_upgrades().keys():
+		choices.append(key)
+
+	choices.shuffle()
+
+	pending_choice_1 = choices[0]
+	pending_choice_2 = choices[1]
+	pending_choice_3 = choices[2]
 
 	btn1.text = pending_choice_1
 	btn2.text = pending_choice_2
 	btn3.text = pending_choice_3
 
-	ui.visible = true          # Show ENTIRE UI
-	get_tree().paused = true   # Pause game
+	# ---------------------------------------
+	# CENTER THE UI PERFECTLY
+	# ---------------------------------------
+	var screen = get_viewport().get_visible_rect().size
 
+	ui.visible = true
+
+	ui.position = screen * 0.5 - ui.size * 0.5   # exact center
+	ui.position.y -= 200  # start slightly ABOVE center
+
+	# ---------------------------------------
+	# BOUNCE TO FINAL CENTER POSITION
+	# ---------------------------------------
+	var target_pos = screen * 0.5 - ui.size * 0.5
+
+	var tw = create_tween()
+	tw.tween_property(ui, "position", target_pos, 0.45)\
+		.set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+
+	get_tree().paused = true
 	title.text = "Choose Your Upgrade"
 
 
-# ---------------------------------------------------------
-# BUTTON CALLBACKS
-# ---------------------------------------------------------
-func _on_option1():
-	apply_upgrade(pending_choice_1)
+# -----------------------------------------------------------------------------------
+# BUTTON PRESS ANIMATION + Apply Upgrade
+# -----------------------------------------------------------------------------------
+func _on_button_pressed(button: Button, index: int):
 
-func _on_option2():
-	apply_upgrade(pending_choice_2)
+	# Button scale animation
+	var t = create_tween()
+	t.tween_property(button, "scale", Vector2(0.85, 0.85), 0.08)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	t.tween_property(button, "scale", Vector2(1, 1), 0.12)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
-func _on_option3():
-	apply_upgrade(pending_choice_3)
+	await t.finished
 
+	# Apply selected upgrade
+	if index == 1:
+		apply_upgrade(pending_choice_1)
+	elif index == 2:
+		apply_upgrade(pending_choice_2)
+	elif index == 3:
+		apply_upgrade(pending_choice_3)
 
-# ---------------------------------------------------------
-# APPLY UPGRADE + HIDE UI + UNPAUSE
-# ---------------------------------------------------------
-func apply_upgrade(powerup_name: String):
-	var data = UPGRADES[powerup_name]
-	data["apply"].call(player)
+# -----------------------------------------------------------------------------------
+# APPLY + EXIT UI WITH BOUNCE
+# -----------------------------------------------------------------------------------
+func apply_upgrade(name: String):
 
-	ui.visible = false         # Hide entire UI again
+	if name in UPGRADE_POOL:
+		UPGRADE_POOL[name].call(player)
+	elif name in speed_secondary_upgrades():
+		speed_secondary_upgrades()[name].call(player)
+	elif name in hp_secondary_upgrades():
+		hp_secondary_upgrades()[name].call(player)
+
+	# Bounce UI upward to hide
+	var t = create_tween()
+	t.tween_property(ui, "position:y", -400, 0.45)\
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+
+	await t.finished
+
+	ui.visible = false
 	get_tree().paused = false
