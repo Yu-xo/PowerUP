@@ -7,7 +7,7 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7lgfk"]
 shader = ExtResource("2_y18vv")
 
-[node name="Ghost" type="Node2D"]
+[node name="Ghost" type="Node2D" groups=["player"]]
 z_index = -1
 script = ExtResource("1_gsdkm")
 

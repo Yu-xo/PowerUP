@@ -3,138 +3,126 @@ class_name UpgradeManager
 
 @onready var player = get_tree().get_first_node_in_group("player")
 
-# The ENTIRE upgrade UI container
 @onready var ui = $VBoxContainer
-
-# Upgrade UI References INSIDE ui
 @onready var panel = $VBoxContainer/Panel
 @onready var title = $VBoxContainer/Label
 @onready var btn1 = $VBoxContainer/option1
 @onready var btn2 = $VBoxContainer/option2
 @onready var btn3 = $VBoxContainer/option3
 
-# Stores the upgrade choices
 var pending_choice_1: String
 var pending_choice_2: String
 var pending_choice_3: String
 
+# Tier selection tracking
+var has_speed_upgrade := false
+var has_hp_upgrade := false
 
-# ---------------------------------------------------------
-# READY → HIDE WHOLE UI ALWAYS
-# ---------------------------------------------------------
 func _ready():
-	ui.visible = false     # Hide everything on game start
-
+	ui.visible = false
 	btn1.pressed.connect(_on_option1)
 	btn2.pressed.connect(_on_option2)
 	btn3.pressed.connect(_on_option3)
 
-
-# ---------------------------------------------------------
-# UPGRADE DATASET
-# ---------------------------------------------------------
-var UPGRADES = {
-	"Impact Boost": {
-		"apply": func(p):
-	p.knockback_force += 40
-	p.dash_damage_bonus += 1
-	},
-	"Kinetic Surge": {
-		"apply": func(p):
-	p.bounce_multiplier += 0.15
-	p.charge_damage_multiplier = 1.2
-	},
-	"Hyper Collision Core": {
-		"apply": func(p):
-	p.first_hit_bonus = 5
-	p.bounce_damage_multiplier = 2.0
-	},
-	"Reactive Shielding": {
-		"apply": func(p):
-	p.shield_regen_rate = 0.1
-	},
-	"Overcharge Dampener": {
-		"apply": func(p):
-	p.overcharge_damage *= 0.5
-	},
-	"Phase Barrier": {
-		"apply": func(p):
-	p.dash_invincible_time = 0.2
-	p.shield_refill_on_hit = true
-	},
-	"Vital Booster": {
-		"apply": func(p):
-	p.max_health += 2
+# -----------------------------------------------------------------------------------
+# MAIN TIER 1 UPGRADES (always appear until chosen)
+# -----------------------------------------------------------------------------------
+var UPGRADE_POOL = {
+	"Speed Boost": func(p):
+	p.base_speed += 20
+	has_speed_upgrade = true
+,
+	"Shrink Body": func(p):
+	p.scale -= Vector2(0.5,0.5)
+,
+	"Max HP +1": func(p):
+	p.max_health += 1
 	p.health = p.max_health
-	},
-	"Nanite Regeneration": {
-		"apply": func(p):
-	p.regen_rate = 0.25
-	},
-	"Bio-Overheal Engine": {
-		"apply": func(p):
-	p.max_overheal = 3
-	p.overheal_bonus_damage = 2
-	},
-	"Velocity Tuner": {
-		"apply": func(p):
-	p.base_speed *= 1.2
-	p.charge_rate *= 1.2
-	},
-	"Dash Streamlining": {
-		"apply": func(p):
-	p.dash_distance_multiplier = 1.1
-	p.dash_cooldown_multiplier = 0.6
-	},
-	"Phantom Dash": {
-		"apply": func(p):
-	p.dash_invincible = true
-	p.dash_phase_through = true
-	p.dash_contact_damage = 1
-	},
+	has_hp_upgrade = true
+,
+	"Max Charge +1": func(p):
+		p.max_charge += 1
 }
 
+# -----------------------------------------------------------------------------------
+# TIER 2 SPEED BRANCH
+# -----------------------------------------------------------------------------------
+func speed_secondary_upgrades():
+	var list = {}
+	if has_speed_upgrade:
+		list["Bounce +1 From Walls"] = func(p):
+			p.bounce_multiplier += 1
 
-# ---------------------------------------------------------
-# SHOW PANEL WHEN WAVE ENDS
-# ---------------------------------------------------------
+		list["Pierce Enemies (HP < 2)"] = func(p):
+			p.can_pierce_low_hp = true
+	return list
+
+# -----------------------------------------------------------------------------------
+# TIER 2 HP BRANCH
+# -----------------------------------------------------------------------------------
+func hp_secondary_upgrades():
+	var list = {}
+	if has_hp_upgrade:
+		list["Regain HP Every 3 Kills"] = func(p):
+			p.has_hp_regen_on_kill = true
+
+		list["Gain Shield After HP Regen"] = func(p):
+			p.has_shield_after_regen = true
+	return list
+
+# -----------------------------------------------------------------------------------
+# SHOW UPGRADE PANEL
+# -----------------------------------------------------------------------------------
 func show_upgrades():
-	var keys = UPGRADES.keys()
-	keys.shuffle()
 
-	pending_choice_1 = keys[0]
-	pending_choice_2 = keys[1]
-	pending_choice_3 = keys[2]
+	var choices = []
+
+	# TIER 1 choices (if not taken)
+	if not has_speed_upgrade:
+		choices.append("Speed Boost")
+	if not has_hp_upgrade:
+		choices.append("Max HP +1")
+
+	choices.append("Shrink Body")
+	choices.append("Max Charge +1")
+
+	# TIER 2 unlocks
+	for key in speed_secondary_upgrades().keys():
+		choices.append(key)
+	for key in hp_secondary_upgrades().keys():
+		choices.append(key)
+
+	choices.shuffle()
+
+	pending_choice_1 = choices[0]
+	pending_choice_2 = choices[1]
+	pending_choice_3 = choices[2]
 
 	btn1.text = pending_choice_1
 	btn2.text = pending_choice_2
 	btn3.text = pending_choice_3
 
-	ui.visible = true          # Show ENTIRE UI
-	get_tree().paused = true   # Pause game
-
+	ui.visible = true
+	get_tree().paused = true
 	title.text = "Choose Your Upgrade"
 
+# -----------------------------------------------------------------------------------
+# APPLY UPGRADE
+# -----------------------------------------------------------------------------------
+func apply_upgrade(name: String):
 
-# ---------------------------------------------------------
-# BUTTON CALLBACKS
-# ---------------------------------------------------------
-func _on_option1():
-	apply_upgrade(pending_choice_1)
+	if name in UPGRADE_POOL:
+		UPGRADE_POOL[name].call(player)
 
-func _on_option2():
-	apply_upgrade(pending_choice_2)
+	elif name in speed_secondary_upgrades():
+		speed_secondary_upgrades()[name].call(player)
 
-func _on_option3():
-	apply_upgrade(pending_choice_3)
+	elif name in hp_secondary_upgrades():
+		hp_secondary_upgrades()[name].call(player)
 
-
-# ---------------------------------------------------------
-# APPLY UPGRADE + HIDE UI + UNPAUSE
-# ---------------------------------------------------------
-func apply_upgrade(powerup_name: String):
-	var data = UPGRADES[powerup_name]
-	data["apply"].call(player)
-
-	ui.visible = false         # Hide entire UI again
+	ui.visible = false
 	get_tree().paused = false
+
+func _on_option1(): apply_upgrade(pending_choice_1)
+func _on_option2(): apply_upgrade(pending_choice_2)
+func _on_option3(): apply_upgrade(pending_choice_3)

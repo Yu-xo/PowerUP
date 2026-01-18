@@ -12,3 +12,23 @@ enemy_type_1 = ExtResource("2_lqsxj")
 enemy_type_2 = ExtResource("2_83hop")
 enemy_type_3 = ExtResource("4_27qly")
 enemy_type_4 = ExtResource("5_ubc02")
+
+[node name="wave_banner" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Wave_Number" type="Label" parent="wave_banner"]
+layout_mode = 0
+offset_left = 309.0
+offset_top = 10.0
+offset_right = 349.0
+offset_bottom = 33.0
+
+[node name="wave_banner_label" type="Label" parent="wave_banner"]
+layout_mode = 0
+offset_left = 285.0
+offset_top = 200.0
+offset_right = 325.0
+offset_bottom = 223.0

@@ -13,15 +13,11 @@ var health: int
 var knockback_velocity: Vector2 = Vector2.ZERO
 var stun_timer: float = 0.0
 
-
 func _ready():
 	health = max_health
 
-	# Navigation setup
 	navigation_agent_2d.target_desired_distance = 8.0
 	navigation_agent_2d.path_desired_distance = 4.0
-
-
 
 func _physics_process(delta: float) -> void:
 	if stun_timer > 0:
@@ -29,39 +25,29 @@ func _physics_process(delta: float) -> void:
 		_process_knockback(delta)
 		return
 
-	# Main AI movement
 	perform_movement(delta)
 
-
 ### ----------------------------------------
-### CHILD OVERRIDES DEFINE *HOW THEY MOVE*
+### MOVEMENT LOGIC
 ### ----------------------------------------
 func perform_movement(_delta: float) -> void:
-	# Base class default: follow player
 	if player:
 		navigation_agent_2d.target_position = player.global_position
-
 		var next_path_pos = navigation_agent_2d.get_next_path_position()
 		var dir = global_position.direction_to(next_path_pos)
 
 		velocity = dir * speed
 		move_and_slide()
 
-
-### ----------------------------------------
-### Navigation callback (Godot 4 style)
-### ----------------------------------------
 func _on_velocity_computed(safe_velocity: Vector2) -> void:
 	velocity = safe_velocity
 
-
 ### ----------------------------------------
-### Knockback System
+### KNOCKBACK
 ### ----------------------------------------
 func apply_knockback(force: Vector2) -> void:
 	knockback_velocity = force
 	stun_timer = stun_time
-
 
 func _process_knockback(delta: float) -> void:
 	if knockback_velocity.length() > 1:
@@ -75,23 +61,30 @@ func _process_knockback(delta: float) -> void:
 	else:
 		knockback_velocity = Vector2.ZERO
 
+### ----------------------------------------
+### DAMAGE SYSTEM (UPDATED)
+### ----------------------------------------
+func take_damage(amount: int = 1, attacker = null) -> void:
 
-### ----------------------------------------
-### Damage System
-### ----------------------------------------
-func take_damage(amount: int = 1) -> void:
+	# If attacker is player, apply new logic
+	if attacker != null and attacker.is_in_group("player"):
+
+		# If player charge is below 3 → enemy does NOT take damage
+		# Player gets punished instead
+		if attacker.charge < 3.0:
+			StatsManager.apply_damage(attacker, 1)
+			return
+
+	# Otherwise, enemy actually takes damage
 	StatsManager.apply_damage(self, amount)
-
 
 func on_hit(amount: int):
 	flash_hit()
-
 
 func flash_hit():
 	modulate = Color(1, 0.3, 0.3)
 	await get_tree().create_timer(0.1).timeout
 	modulate = Color(1, 1, 1)
-
 
 func die():
 	queue_free()

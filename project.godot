@@ -12,7 +12,7 @@ config_version=5
 
 config/name="MinJam:PowerUP"
 run/main_scene="uid://ch1qao0xjo4fi"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]

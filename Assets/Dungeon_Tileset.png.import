@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://57q2mf3ce3w8"
-path="res://.godot/imported/sheepy.png-d57a3324dbf7c3810edaa3c1610c9268.ctex"
+uid="uid://6g0yopcnw3m6"
+path="res://.godot/imported/Dungeon_Tileset.png-92fff66eaabfa4d2f129c733489db25a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/sheepy.png"
-dest_files=["res://.godot/imported/sheepy.png-d57a3324dbf7c3810edaa3c1610c9268.ctex"]
+source_file="res://Assets/Dungeon_Tileset.png"
+dest_files=["res://.godot/imported/Dungeon_Tileset.png-92fff66eaabfa4d2f129c733489db25a.ctex"]
 
 [params]
 
