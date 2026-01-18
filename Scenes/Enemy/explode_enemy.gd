@@ -8,6 +8,7 @@ class_name ExploderEnemy
 @export var fuse_time: float = 0.35          # Delay before explosion after triggering
 
 var exploding: bool = false
+@onready var sprite_2d: AnimatedSprite2D = $Sprite2D
 
 
 func _ready():
@@ -37,6 +38,7 @@ func _physics_process(delta: float) -> void:
 # Explosion Logic
 # ---------------------------------------------------
 func start_explosion() -> void:
+	sprite_2d.play("boom")
 	exploding = true
 	velocity = Vector2.ZERO
 

@@ -17,6 +17,7 @@ extends CharacterBody2D
 @onready var tween := create_tween()
 @onready var body_tween := create_tween()
 @onready var player_sprite := $Sprite2D
+@onready var swordsprite := $sword
 @onready var hud: CanvasLayer = $HUD
 
 @export var ghost_interval := 0.01
@@ -109,7 +110,7 @@ func _physics_process(delta):
 		ghost_timer = ghost_interval
 
 	if is_aiming or is_charging or is_dashing:
-		look_at(get_global_mouse_position())
+		swordsprite.look_at(get_global_mouse_position())
 
 	# Charging
 	if is_charging and !is_aiming:
