@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cc1f1jc147fxu" path="res://Scenes/Character/Player.tscn" id="1_ropog"]
 [ext_resource type="PackedScene" uid="uid://m1hpkdbfbu72" path="res://Scenes/Waves/Spawner.tscn" id="2_wyxvx"]
 [ext_resource type="PackedScene" uid="uid://dywdlsqwyumd5" path="res://Scenes/UI/Upgrades/Upgrades.tscn" id="3_38uoo"]
-[ext_resource type="AudioStream" uid="uid://c2jvu1puee03o" path="res://Assets/music/geometry dash.mp3" id="5_jbeyo"]
+[ext_resource type="AudioStream" uid="uid://c6kxbnxixwm3a" path="res://Assets/music/AAAAAAAAAAAAAAAAAAAAA.mp3" id="5_jbeyo"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jbeyo"]
 texture = ExtResource("1_0j08j")

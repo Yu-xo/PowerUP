@@ -22,7 +22,11 @@ extends CharacterBody2D
 
 @export var ghost_interval := 0.01
 @export var ghost_scene = preload("res://Scenes/Character/ghost.tscn")
+@export var ghost_texture = preload("uid://dv6xgdwfq0jdr")
 var ghost_timer := 0.0
+
+@onready var dashsound: AudioStreamPlayer = $dashsound
+@onready var deathsound: AudioStreamPlayer = $deathsound
 
 # ---------------------------------------------------------
 # RUNTIME
@@ -219,6 +223,7 @@ func handle_collision(collision):
 	if collider is StaticBody2D or collider is TileMap:
 		is_dashing = false
 		charge = 0.0
+		velocity = Vector2.ZERO
 		return
 
 	if collider is CharacterBody2D:
@@ -321,7 +326,8 @@ func die():
 	hide()
 	set_physics_process(false)
 	set_process_input(false)
-	await get_tree().create_timer(3.0).timeout
+	deathsound.play()
+	await deathsound.finished
 	get_tree().change_scene_to_file("res://Scenes/UI/main_menu.tscn")
 
 # ---------------------------------------------------------
@@ -342,12 +348,13 @@ func update_player_visuals():
 func animate_player_charge_start():
 	if body_tween.is_running(): body_tween.kill()
 	body_tween = create_tween()
-	body_tween.tween_property(self, "scale", Vector2(1.1, 1.1), 0.2)
+	#body_tween.tween_property(self, "scale", Vector2(1.1, 1.1), 0.2)
 
 func animate_player_charge_end():
 	if body_tween.is_running(): body_tween.kill()
 	body_tween = create_tween()
-	body_tween.tween_property(self, "scale", Vector2(1, 1), 0.25)
+	dashsound.play()
+	#body_tween.tween_property(self, "scale", Vector2(1, 1), 0.25)
 
 # ---------------------------------------------------------
 # GHOST
@@ -355,4 +362,4 @@ func animate_player_charge_end():
 func spawn_ghost():
 	var g = ghost_scene.instantiate()
 	get_tree().current_scene.add_child(g)
-	g.start(player_sprite.texture, global_position, rotation)
+	g.start(ghost_texture, global_position, rotation, scale)

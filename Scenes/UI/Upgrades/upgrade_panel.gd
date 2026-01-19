@@ -51,8 +51,6 @@ var UPGRADE_POOL = {
 func speed_secondary_upgrades():
 	var list = {}
 	if has_speed_upgrade:
-		list["Bounce +1 From Walls"] = func(p):
-			p.bounce_multiplier += 1
 
 		list["Pierce Enemies (HP < 2)"] = func(p):
 			p.can_pierce_low_hp = true

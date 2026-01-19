@@ -32,7 +32,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"default",
-"speed": 5.0
+"speed": 4.0
 }]
 
 [node name="FollowEnemy" type="CharacterBody2D"]
@@ -45,4 +45,5 @@ shape = SubResource("CapsuleShape2D_ms7en")
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_buwji")
+autoplay = "default"
 offset = Vector2(3, 17)

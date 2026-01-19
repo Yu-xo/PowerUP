@@ -4,7 +4,6 @@ extends CanvasLayer
 @onready var hp_label: Label = $Control/HP/Label
 @onready var charge: ProgressBar = $Control/charge
 @onready var root: Control = $Control        # for shake
-@onready var flash: ColorRect = $Control/ColorRect    # white flash overlay
 
 var hp_tween: Tween
 var shake_tween: Tween
@@ -28,7 +27,7 @@ func set_hp(value: float, max_hp: float, damaged: bool = false):
 
 	if damaged:
 		shake_hp_bar()
-		hit_flash()
+		#hit_flash()
 
 func set_charge(value: float, max_charge: float, is_overcharging: bool = false):
 	charge.max_value = max_charge
@@ -61,14 +60,14 @@ func shake_hp_bar():
 # ---------------------------------------------------------
 # WHITE FLASH HIT EFFECT
 # ---------------------------------------------------------
-func hit_flash():
-	flash.visible = true
-	flash.modulate.a = 0.6
-
-	if flash_tween:
-		flash_tween.kill()
-
-	flash_tween = create_tween()
-	flash_tween.tween_property(flash, "modulate:a", 0.0, 0.20)\
-		.set_trans(Tween.TRANS_SINE)
-	flash_tween.tween_callback(func(): flash.visible = false)
+#func hit_flash():
+	#flash.visible = true
+	#flash.modulate.a = 0.6
+#
+	#if flash_tween:
+		#flash_tween.kill()
+#
+	#flash_tween = create_tween()
+	#flash_tween.tween_property(flash, "modulate:a", 0.0, 0.20)\
+		#.set_trans(Tween.TRANS_SINE)
+	#flash_tween.tween_callback(func(): flash.visible = false)

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://ch3iwpcrtcekt"
+path="res://.godot/imported/death ig.mp3-2ecfa390d1e0499974d7dd8911516d44.mp3str"
+
+[deps]
+
+source_file="res://Assets/music/death ig.mp3"
+dest_files=["res://.godot/imported/death ig.mp3-2ecfa390d1e0499974d7dd8911516d44.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
